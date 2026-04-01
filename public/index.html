@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="FTP Transfer Client — Upload images to your Hostinger server and get public URLs instantly." />
+  <title>FTP Transfer Client</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- Header -->
+    <header class="header">
+      <h1 class="header__title">Cloud Storage</h1>
+      <p class="header__subtitle">Upload images to your server and get public URLs instantly</p>
+    </header>
+
+    <!-- Connection Card -->
+    <section class="card" id="connection-card">
+      <div class="card__header">
+        <div class="card__icon">🔗</div>
+        <div>
+          <h2 class="card__title">FTP Connection</h2>
+          <p class="card__description">Enter your Hostinger FTP credentials</p>
+        </div>
+      </div>
+      <form id="credentials-form" autocomplete="off">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="ftp-host">FTP Hostname / IP</label>
+            <input class="form-input" type="text" id="ftp-host" placeholder="123.234.456.87" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ftp-port">Port</label>
+            <input class="form-input" type="number" id="ftp-port" placeholder="21" value="21" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ftp-user">Username</label>
+            <input class="form-input" type="text" id="ftp-user" placeholder="FTP username" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ftp-password">Password</label>
+            <input class="form-input" type="password" id="ftp-password" placeholder="FTP password" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ftp-domain">Hostinger File URL</label>
+            <input class="form-input" type="text" id="ftp-domain" placeholder="srv1990-files.hstgr.io/.../public_html" required />
+            <span class="form-hint" style="line-height: 1.4; display: block; margin-top: 4px;">Paste your exact Hostinger path (e.g. srv1990-files.hstgr.io/.../public_html)</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ftp-folder">Folder Name</label>
+            <input class="form-input" type="text" id="ftp-folder" placeholder="e.g. cats" required />
+            <span class="form-hint">Folder inside public_html (e.g. cats, dogs, uploads)</span>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- Upload Card -->
+    <section class="card" id="upload-card">
+      <div class="card__header">
+        <div class="card__icon">📤</div>
+        <div>
+          <h2 class="card__title">Upload Images</h2>
+          <p class="card__description">Drag &amp; drop or browse to select images</p>
+        </div>
+      </div>
+
+      <div class="dropzone" id="dropzone">
+        <span class="dropzone__icon">🖼️</span>
+        <p class="dropzone__text">Drag images here or <strong>click to browse</strong></p>
+        <p class="dropzone__hint">Supports JPEG, PNG, GIF, WebP, SVG • Max 50 MB per file</p>
+        <input type="file" id="file-input" multiple accept="image/*" />
+      </div>
+
+      <ul class="file-list" id="file-list"></ul>
+
+      <div class="progress-container" id="progress-container">
+        <div class="progress-bar">
+          <div class="progress-bar__fill" id="progress-fill"></div>
+        </div>
+        <p class="progress-text" id="progress-text">0%</p>
+      </div>
+
+      <div id="upload-status" class="status-bar"></div>
+
+      <div class="actions-row">
+        <button class="btn btn--primary" id="upload-btn" type="button" disabled>
+          <span>📤</span> Upload Files
+        </button>
+        <button class="btn btn--secondary" id="get-files-btn" type="button">
+          <span>📂</span> Get All Files
+        </button>
+      </div>
+    </section>
+
+    <!-- Results Card -->
+    <section class="card" id="results-card">
+      <div class="card__header">
+        <div class="card__icon">🌐</div>
+        <div>
+          <h2 class="card__title">Public URLs</h2>
+          <p class="card__description">Your uploaded images with shareable links</p>
+        </div>
+      </div>
+
+      <div id="results-container">
+        <div class="empty-state" id="empty-state">
+          <span class="empty-state__icon">📭</span>
+          <p class="empty-state__text">No files yet — upload images or fetch existing ones</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  <script src="app.js?v=2"></script>
+</body>
+</html>
