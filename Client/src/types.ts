@@ -45,4 +45,17 @@ export interface RenameResponse {
   message: string;
 }
 
+export interface MoveFileResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface CreateFolderResponse {
+  success: boolean;
+  message: string;
+}
+
+/** Filter type for the GoDaddy folder browser */
+export type FileTypeFilter = 'all' | 'images' | 'videos' | 'documents' | 'audio';
+
 export type ActivePage = 'hostinger' | 'godaddy';

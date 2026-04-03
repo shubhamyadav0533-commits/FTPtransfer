@@ -81,8 +81,8 @@ export const AccountSwitcher: React.FC<Props> = ({ activePage, onSwitch }) => {
                   {account.icon}
                 </span>
                 <div className="flex-1 text-left">
-                  <span className="block text-sm font-semibold">{account.label}</span>
-                  <span className={`block text-[11px] mt-0.5 leading-snug ${isActive ? 'text-primary/70' : 'text-text-muted/70'}`}>{account.description}</span>
+                  <span className="block text-text text-sm font-semibold">{account.label}</span>
+                  <span className={`block text-[11px] mt-0.5 leading-snug ${isActive ? 'text-primary/90' : 'text-text-muted/60'}`}>{account.description}</span>
                 </div>
                 {isActive && (
                   <span className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0" />

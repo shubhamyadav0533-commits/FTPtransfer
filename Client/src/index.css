@@ -105,4 +105,43 @@
   .item-card-selected {
     @apply ring-2 ring-primary ring-offset-1 ring-offset-background;
   }
+
+  /* ── Drag & Drop styles ── */
+  .drag-over-folder {
+    @apply border-primary bg-primary/10 scale-105 shadow-md;
+    transition: all 0.15s ease;
+  }
+
+  .dragging-file {
+    opacity: 0.4;
+    transform: scale(0.95);
+  }
+
+  /* ── Filter pill active glow ── */
+  .filter-pill {
+    transition: all 0.15s ease;
+  }
+
+  .filter-pill:hover {
+    transform: translateY(-1px);
+  }
+
+  /* ── Drop zone pulse ── */
+  @keyframes dropZonePulse {
+    0%, 100% { border-color: var(--color-primary, #8b7c65); }
+    50% { border-color: transparent; }
+  }
+
+  .drop-zone-active {
+    animation: dropZonePulse 1s ease-in-out infinite;
+  }
+
+  /* ── Smooth draggable cursor ── */
+  [draggable="true"] {
+    cursor: grab;
+  }
+
+  [draggable="true"]:active {
+    cursor: grabbing;
+  }
 }

@@ -16,12 +16,22 @@ interface ModalState {
 function App() {
   const [activePage, setActivePage] = useState<ActivePage>('hostinger');
 
+  // ── Hostinger credentials ──
   const [credentials, setCredentials] = useState<SftpCredentials>({
     host: '',
     user: '',
     password: '',
     port: 65002,
     domain: 'paleturquoise-lion-613082.hostingersite.com',
+  });
+
+  // ── GoDaddy credentials ──
+  const [gdCredentials, setGdCredentials] = useState<SftpCredentials>({
+    host: '',
+    user: '',
+    password: '',
+    port: 22,
+    domain: 'brijvrindafarms.in',
   });
 
   const [folders, setFolders] = useState<FolderEntry[]>([]);
@@ -38,7 +48,7 @@ function App() {
     setModalState({ isOpen: true, message, action });
   }, []);
 
-  const handleUploadSuccess = useCallback(() => {
+  const handleRefresh = useCallback(() => {
     setRefreshTrigger((prev) => prev + 1);
   }, []);
 
@@ -55,6 +65,15 @@ function App() {
             <ConnectionCard
               credentials={credentials}
               onChange={setCredentials}
+              onConnect={handleRefresh}
+            />
+          )}
+          {activePage === 'godaddy' && (
+            <ConnectionCard
+              credentials={gdCredentials}
+              onChange={setGdCredentials}
+              onConnect={handleRefresh}
+              label="Go Daddy"
             />
           )}
         </div>
@@ -72,11 +91,15 @@ function App() {
             <UploadCard
               credentials={credentials}
               folders={folders}
-              onUploadSuccess={handleUploadSuccess}
+              onUploadSuccess={handleRefresh}
             />
           </div>
         ) : (
-          <GoDaddyPage />
+          <GoDaddyPage
+            credentials={gdCredentials}
+            onConfirmDelete={confirmDelete}
+            refreshTrigger={refreshTrigger}
+          />
         )}
       </div>
 

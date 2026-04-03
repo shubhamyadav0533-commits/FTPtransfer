@@ -39,6 +39,17 @@ export const FolderBrowserCard: React.FC<Props> = ({
   const [filesLoading, setFilesLoading] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
 
+  // ─── Auto-clear status messages ────────────────────────
+  useEffect(() => {
+    if (error || success) {
+      const timer = setTimeout(() => {
+        setError(null);
+        setSuccess(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, success]);
+
   // Selection state
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);

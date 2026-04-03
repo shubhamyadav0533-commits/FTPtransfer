@@ -3,9 +3,9 @@ import path from "path";
 import { SftpCredentials, FileEntry, FolderEntry } from "./types";
 
 /**
- * The exact absolute path to public_html on the Hostinger server.
+ * The exact absolute path to the base uploads directory on the Hostinger server.
  */
-const PUBLIC_HTML = "/home/u608833076/domains/theclubfarm.in/public_html";
+const BASE_DIR = "/home/u608833076/domains/theclubfarm.in/public_html/uploads";
 
 /**
  * Creates and connects an SFTP client with the given credentials.
@@ -31,7 +31,7 @@ async function createSftpClient(credentials: SftpCredentials): Promise<SftpClien
  */
 function getRemoteDir(folder: string): string {
   const clean = folder.replace(/[^a-zA-Z0-9_-]/g, "");
-  return path.posix.join(PUBLIC_HTML, clean);
+  return path.posix.join(BASE_DIR, clean);
 }
 
 /**
@@ -41,7 +41,7 @@ function buildPublicUrl(credentials: SftpCredentials, folder: string, filename: 
   const domain = credentials.domain.trim();
   const cleanDomain = domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
   const cleanFolder = folder.replace(/[^a-zA-Z0-9_-]/g, "");
-  return `https://${cleanDomain}/${cleanFolder}/${encodeURIComponent(filename)}`;
+  return `https://${cleanDomain}/uploads/${cleanFolder}/${encodeURIComponent(filename)}`;
 }
 
 /**
@@ -99,7 +99,7 @@ export async function listFiles(
     // Check if the directory exists — do NOT auto-create
     const exists = await client.exists(remoteDir);
     if (!exists) {
-      throw new Error(`Directory "${folder}" does not exist inside public_html.`);
+      throw new Error(`Directory "${folder}" does not exist inside uploads.`);
     }
 
     const listing = await client.list(remoteDir);
@@ -118,21 +118,18 @@ export async function listFiles(
   }
 }
 
-/**
- * Lists all directories inside public_html.
- */
 export async function listFolders(
   credentials: SftpCredentials
 ): Promise<FolderEntry[]> {
   const client = await createSftpClient(credentials);
 
   try {
-    const exists = await client.exists(PUBLIC_HTML);
+    const exists = await client.exists(BASE_DIR);
     if (!exists) {
-      throw new Error("public_html directory does not exist on the server.");
+      throw new Error("uploads directory does not exist on the server. Please create it first.");
     }
 
-    const listing = await client.list(PUBLIC_HTML);
+    const listing = await client.list(BASE_DIR);
 
     const folders: FolderEntry[] = listing
       .filter((item) => item.type === "d") // "d" = directory
@@ -186,7 +183,7 @@ export async function deleteFolder(
 
     const exists = await client.exists(remoteDir);
     if (!exists) {
-      throw new Error(`Directory "${folderName}" does not exist inside public_html.`);
+      throw new Error(`Directory "${folderName}" does not exist inside uploads.`);
     }
 
     await client.rmdir(remoteDir, true); // true = recursive
@@ -212,7 +209,7 @@ export async function renameFolder(
 
     const exists = await client.exists(oldPath);
     if (!exists) {
-      throw new Error(`Directory "${oldName}" does not exist inside public_html.`);
+      throw new Error(`Directory "${oldName}" does not exist inside uploads.`);
     }
 
     const newExists = await client.exists(newPath);
