@@ -1,7 +1,12 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import path from "path";
 import apiRoutes from "./routes";
+import publicRoutes from "./public/publicRoutes";
+// Import workers so they start processing jobs on server boot
+import "./public/uploadQueue";
+import "./public/deleteQueue";
 
 const app = express();
 const PORT = 3000;
@@ -24,8 +29,11 @@ app.use(express.urlencoded({ extended: true }));
 const clientPath = path.join(__dirname, "..", "..", "Client", "dist");
 app.use(express.static(clientPath));
 
-// API routes
+// Dashboard API routes (existing — untouched)
 app.use("/api", apiRoutes);
+
+// Public API routes (new)
+app.use("/api/v1", publicRoutes);
 
 // Fallback to index.html
 app.get("/{*path}", (_req, res) => {
@@ -33,5 +41,6 @@ app.get("/{*path}", (_req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`\n🚀 Backend Server running at http://localhost:${PORT}\n`);
+  console.log(`\n🚀 Backend Server running at http://localhost:${PORT}`);
+  console.log(`📡 Public API available at http://localhost:${PORT}/api/v1\n`);
 });
