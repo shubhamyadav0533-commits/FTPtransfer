@@ -17,6 +17,13 @@ function App() {
   const [activePage, setActivePage] = useState<ActivePage>('hostinger');
 
   // ── Hostinger credentials ──
+  const HOSTINGER_PRESET: Partial<SftpCredentials> = {
+    host: '145.79.210.181',
+    user: 'u608833076',
+    password: '*e4pnLhyPgt8ut#',
+    port: 65002,
+  };
+
   const [credentials, setCredentials] = useState<SftpCredentials>({
     host: '',
     user: '',
@@ -59,6 +66,14 @@ function App() {
     setRefreshTrigger((prev) => prev + 1);
   }, []);
 
+  const fillHostingerPreset = useCallback(() => {
+    setCredentials((prev) => ({
+      ...prev,
+      ...HOSTINGER_PRESET,
+    }));
+    handleRefresh();
+  }, [handleRefresh]);
+
   const fillGoDaddyPreset = useCallback(() => {
     setGdCredentials((prev) => ({
       ...prev,
@@ -81,6 +96,8 @@ function App() {
               credentials={credentials}
               onChange={setCredentials}
               onConnect={handleRefresh}
+              onPreset={fillHostingerPreset}
+              presetLabel="Load Hostinger"
             />
           )}
           {activePage === 'godaddy' && (

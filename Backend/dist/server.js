@@ -8,6 +8,17 @@ const path_1 = __importDefault(require("path"));
 const routes_1 = __importDefault(require("./routes"));
 const app = (0, express_1.default)();
 const PORT = 3000;
+// CORS middleware for browser clients
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    if (req.method === "OPTIONS") {
+        res.sendStatus(204);
+        return;
+    }
+    next();
+});
 // Parse JSON request bodies
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
