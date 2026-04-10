@@ -47,3 +47,13 @@ export interface RenameResponse {
     success: boolean;
     message: string;
 }
+/** Response for move-file operations */
+export interface MoveFileResponse {
+    success: boolean;
+    message: string;
+}
+/** Response for create-folder operations */
+export interface CreateFolderResponse {
+    success: boolean;
+    message: string;
+}

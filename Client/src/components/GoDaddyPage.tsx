@@ -171,6 +171,9 @@ export const GoDaddyPage: React.FC<Props> = ({
   // Upload
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [downloading, setDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadingFile, setDownloadingFile] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragActive, setIsDragActive] = useState(false);
 
@@ -466,11 +469,26 @@ export const GoDaddyPage: React.FC<Props> = ({
   // ─── Download File ─────────────────────────────────────
   const handleDownloadFile = useCallback(async (filename: string) => {
     if (!currentFolder) return;
+    setDownloading(true);
+    setDownloadProgress(0);
+    setDownloadingFile(filename);
+    setError(null);
     try {
-      await GoDaddyApiService.downloadFile({ ...credentials, folder: currentFolder }, filename);
+      await GoDaddyApiService.downloadFile(
+        { ...credentials, folder: currentFolder },
+        filename,
+        (pct) => setDownloadProgress(pct)
+      );
+      setSuccess(`Downloaded "${filename}"`);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Download failed';
       setError(msg);
+    } finally {
+      setDownloading(false);
+      setTimeout(() => {
+        setDownloadProgress(0);
+        setDownloadingFile(null);
+      }, 2000);
     }
   }, [credentials, currentFolder]);
 
@@ -745,6 +763,20 @@ export const GoDaddyPage: React.FC<Props> = ({
             />
           </div>
           <p className="text-right text-[10px] text-text-muted mt-0.5 font-medium">{uploadProgress}%</p>
+        </div>
+      )}
+
+      {downloading && (
+        <div className="mb-3">
+          <div className="h-1.5 w-full bg-taupe-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-emerald-500 transition-all duration-300"
+              style={{ width: `${downloadProgress}%` }}
+            />
+          </div>
+          <p className="text-right text-[10px] text-text-muted mt-0.5 font-medium">
+            {downloadingFile ? `${downloadingFile}: ` : ''}{downloadProgress}%
+          </p>
         </div>
       )}
 
@@ -1070,10 +1102,15 @@ export const GoDaddyPage: React.FC<Props> = ({
                           e.stopPropagation();
                           handleDownloadFile(f.name);
                         }}
-                        className="absolute top-1.5 left-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-background/90 backdrop-blur-sm border border-taupe-200 shadow-sm p-1.5 rounded-lg flex items-center justify-center z-10 hover:bg-background text-text"
-                        title="Download File"
+                        disabled={downloading && downloadingFile === f.name}
+                        className="absolute top-1.5 left-1.5 opacity-0 group-hover:opacity-100 transition-opacity bg-background/90 backdrop-blur-sm border border-taupe-200 shadow-sm p-1.5 rounded-lg flex items-center justify-center z-10 hover:bg-background text-text disabled:cursor-not-allowed disabled:opacity-60"
+                        title={downloading && downloadingFile === f.name ? `Downloading ${downloadProgress}%` : 'Download File'}
                       >
-                        <Download className="w-4 h-4" />
+                        {downloading && downloadingFile === f.name ? (
+                          <span className="text-[10px] font-semibold">{downloadProgress}%</span>
+                        ) : (
+                          <Download className="w-4 h-4" />
+                        )}
                       </button>
 
                       {fileType === 'image' ? (

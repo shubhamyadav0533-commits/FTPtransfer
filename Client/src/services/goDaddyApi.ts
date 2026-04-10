@@ -149,27 +149,50 @@ export class GoDaddyApiService {
 
   static async downloadFile(
     credentials: SftpCredentials & { folder: string },
-    filename: string
+    filename: string,
+    onProgress?: (pct: number) => void
   ): Promise<void> {
-    const res = await fetch("/api/godaddy/download", {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ ...credentials, filename }),
+    return new Promise<void>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "/api/godaddy/download");
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.responseType = "blob";
+
+      xhr.addEventListener("progress", (e) => {
+        if (e.lengthComputable && onProgress) {
+          const pct = Math.round((e.loaded / e.total) * 100);
+          onProgress(pct);
+        }
+      });
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const url = URL.createObjectURL(xhr.response);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          resolve();
+          return;
+        }
+
+        let message = "Download failed";
+        try {
+          const errorBody = JSON.parse(xhr.responseText) as { message?: string };
+          if (errorBody?.message) {
+            message = errorBody.message;
+          }
+        } catch {
+          // ignore parse errors
+        }
+        reject(new Error(message));
+      });
+
+      xhr.addEventListener("error", () => reject(new Error("Network error during download")));
+      xhr.send(JSON.stringify({ ...credentials, filename }));
     });
-
-    if (!res.ok) {
-      const errorBody = await res.json() as { message: string };
-      throw new Error(errorBody.message || "Download failed");
-    }
-
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   }
 }

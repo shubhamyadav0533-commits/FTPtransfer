@@ -7,9 +7,18 @@ interface Props {
   onChange: (creds: SftpCredentials) => void;
   onConnect: () => void;
   label?: string;
+  onPreset?: () => void;
+  presetLabel?: string;
 }
 
-export const ConnectionCard: React.FC<Props> = ({ credentials, onChange, onConnect, label = 'Hostinger' }) => {
+export const ConnectionCard: React.FC<Props> = ({
+  credentials,
+  onChange,
+  onConnect,
+  label = 'Hostinger',
+  onPreset,
+  presetLabel,
+}) => {
   const [error, setError] = useState<string | null>(null);
   const handleChange = (field: keyof SftpCredentials, value: string) => {
     onChange({ ...credentials, [field]: field === 'port' ? parseInt(value) || 22 : value });
@@ -40,14 +49,29 @@ export const ConnectionCard: React.FC<Props> = ({ credentials, onChange, onConne
           </div>
         </div>
 
-        <button
-          onClick={handleConnect}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/80 text-white transition-colors rounded-lg text-sm font-semibold shadow-sm shrink-0"
-          type="button"
-        >
-          <Zap className="w-4 h-4" />
-          <span className="hidden sm:inline">Connect</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {onPreset && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                onPreset();
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-text transition-colors rounded-lg text-sm font-semibold border border-taupe-200 shadow-sm"
+              type="button"
+            >
+              <span className="hidden sm:inline">{presetLabel || 'Load preset'}</span>
+              <span className="sm:hidden">Preset</span>
+            </button>
+          )}
+          <button
+            onClick={handleConnect}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/80 text-white transition-colors rounded-lg text-sm font-semibold shadow-sm shrink-0"
+            type="button"
+          >
+            <Zap className="w-4 h-4" />
+            <span className="hidden sm:inline">Connect</span>
+          </button>
+        </div>
       </div>
 
       {error && (

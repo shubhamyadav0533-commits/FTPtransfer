@@ -26,6 +26,13 @@ function App() {
   });
 
   // ── GoDaddy credentials ──
+  const GODADDY_PRESET: Partial<SftpCredentials> = {
+    host: '184.168.97.113',
+    user: 'afpsx7bu0o7r',
+    password: '95PP@xUwfg3fFtu$',
+    port: 22,
+  };
+
   const [gdCredentials, setGdCredentials] = useState<SftpCredentials>({
     host: '',
     user: '',
@@ -52,6 +59,14 @@ function App() {
     setRefreshTrigger((prev) => prev + 1);
   }, []);
 
+  const fillGoDaddyPreset = useCallback(() => {
+    setGdCredentials((prev) => ({
+      ...prev,
+      ...GODADDY_PRESET,
+    }));
+    handleRefresh();
+  }, [handleRefresh]);
+
   return (
     <div className="min-h-screen bg-background py-6 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto space-y-4">
@@ -73,6 +88,8 @@ function App() {
               credentials={gdCredentials}
               onChange={setGdCredentials}
               onConnect={handleRefresh}
+              onPreset={fillGoDaddyPreset}
+              presetLabel="Load GoDaddy"
               label="Go Daddy"
             />
           )}
