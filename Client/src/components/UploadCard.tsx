@@ -87,7 +87,7 @@ export const UploadCard: React.FC<Props> = ({ credentials, folders, onUploadSucc
           <Upload className="text-primary w-4 h-4" />
         </div>
         <div>
-          <h2 className="text-base font-bold mb-0.5 text-text leading-tight">Upload Images</h2>
+          <h2 className="text-base font-bold mb-0.5 text-text leading-tight">Upload Files</h2>
           <p className="text-xs text-text-muted hidden sm:block">Drag & drop or browse</p>
         </div>
       </div>
@@ -127,9 +127,9 @@ export const UploadCard: React.FC<Props> = ({ credentials, folders, onUploadSucc
           <div className="w-10 h-10 bg-taupe-100 rounded-full flex items-center justify-center mx-auto mb-2">
             <Upload className="w-5 h-5 text-primary" />
           </div>
-          <p className="text-text font-medium text-sm mb-0.5">Drag images here or <span className="text-primary underline">browse</span></p>
-          <p className="text-text-muted text-[10px]">JPEG, PNG, GIF, WebP, SVG • Max 50 MB</p>
-          <input type="file" ref={fileInputRef} className="hidden" multiple accept="image/*" onChange={handleFileChange} />
+          <p className="text-text font-medium text-sm mb-0.5">Drag files here or <span className="text-primary underline">browse</span></p>
+          <p className="text-text-muted text-[10px]">JPEG, PNG, GIF, WebP, SVG, PDF • Max 50 MB</p>
+          <input type="file" ref={fileInputRef} className="hidden" multiple accept="image/*,.pdf,application/pdf" onChange={handleFileChange} />
         </div>
 
         {/* File List */}
@@ -137,7 +137,7 @@ export const UploadCard: React.FC<Props> = ({ credentials, folders, onUploadSucc
           <ul className="space-y-1 mb-3 max-h-32 overflow-y-auto pr-1 border border-taupe-100 rounded-xl p-1.5 bg-background flex-shrink-0">
             {files.map((file, i) => (
               <li key={i} className="flex items-center justify-between p-1.5 hover:bg-taupe-100 rounded-lg group transition-colors">
-                <span className="text-xs font-medium text-text truncate max-w-[65%]">🖼️ {file.name}</span>
+                <span className="text-xs font-medium text-text truncate max-w-[65%]">� {file.name}</span>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] text-text-muted">{formatSize(file.size)}</span>
                   <button

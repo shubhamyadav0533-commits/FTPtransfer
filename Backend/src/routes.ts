@@ -66,6 +66,7 @@ const upload = multer({
       "image/svg+xml",
       "image/bmp",
       "image/tiff",
+      "application/pdf",
     ];
     if (allowedMimeTypes.includes(file.mimetype)) {
       cb(null, true);
@@ -145,11 +146,22 @@ function extractCredentials(body: Record<string, string>): SftpCredentials | nul
 
 /**
  * POST /api/upload
- * Upload images via SFTP to the remote server.
+ * Upload files via SFTP to the remote server.
  */
 router.post(
   "/upload",
-  upload.array("files", 20),
+  (req: Request, res: Response, next: Function) => {
+    upload.array("files", 20)(req, res, (err: any) => {
+      if (err) {
+        const message = err instanceof multer.MulterError
+          ? `Upload error: ${err.message}`
+          : err.message || "File upload failed";
+        res.status(400).json({ success: false, urls: [], message });
+        return;
+      }
+      next();
+    });
+  },
   async (req: Request, res: Response): Promise<void> => {
     try {
       const body = req.body as Record<string, string>;

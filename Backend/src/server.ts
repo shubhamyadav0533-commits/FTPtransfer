@@ -3,10 +3,6 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import apiRoutes from "./routes";
-import publicRoutes from "./public/publicRoutes";
-// Import workers so they start processing jobs on server boot
-import "./public/uploadQueue";
-import "./public/deleteQueue";
 
 const app = express();
 const PORT = 3000;
@@ -32,8 +28,15 @@ app.use(express.static(clientPath));
 // Dashboard API routes (existing — untouched)
 app.use("/api", apiRoutes);
 
-// Public API routes (new)
-app.use("/api/v1", publicRoutes);
+// Public API routes — only load if Supabase + Redis are configured
+if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY) {
+  import("./public/publicRoutes").then((mod) => {
+    app.use("/api/v1", mod.default);
+    console.log(`📡 Public API available at http://localhost:${PORT}/api/v1`);
+  });
+  import("./public/uploadQueue");
+  import("./public/deleteQueue");
+}
 
 // Fallback to index.html
 app.get("/{*path}", (_req, res) => {
@@ -42,5 +45,4 @@ app.get("/{*path}", (_req, res) => {
 
 app.listen(PORT, () => {
   console.log(`\n🚀 Backend Server running at http://localhost:${PORT}`);
-  console.log(`📡 Public API available at http://localhost:${PORT}/api/v1\n`);
 });

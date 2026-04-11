@@ -3,14 +3,12 @@ import "dotenv/config";
 
 const ENCRYPTION_KEY_HEX = process.env.ENCRYPTION_KEY;
 
-if (!ENCRYPTION_KEY_HEX || ENCRYPTION_KEY_HEX.length !== 64) {
-  throw new Error(
-    "ENCRYPTION_KEY must be a 64-character hex string (32 bytes). " +
-      'Generate one with: node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
-  );
+let ENCRYPTION_KEY: Buffer | null = null;
+
+if (ENCRYPTION_KEY_HEX && ENCRYPTION_KEY_HEX.length === 64) {
+  ENCRYPTION_KEY = Buffer.from(ENCRYPTION_KEY_HEX, "hex");
 }
 
-const ENCRYPTION_KEY = Buffer.from(ENCRYPTION_KEY_HEX, "hex");
 const IV_LENGTH = 16; // AES block size
 
 /**
