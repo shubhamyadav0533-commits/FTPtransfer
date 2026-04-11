@@ -7,7 +7,7 @@ import {
   RenameResponse,
 } from "../types";
 
-const API_BASE_URL = "https://ftptransfer-demos.onrender.com";
+const API_BASE_URL = "http://localhost:3000"; // Adjust if backend runs on different host/port
 
 const headers = {
   "Content-Type": "application/json",
@@ -55,9 +55,14 @@ export class ApiService {
       
       xhr.addEventListener("load", () => {
         try {
-          resolve(JSON.parse(xhr.responseText));
+          const data = JSON.parse(xhr.responseText);
+          if (!data.success) {
+            reject(new Error(data.message || "Upload failed"));
+          } else {
+            resolve(data);
+          }
         } catch {
-          reject(new Error("Invalid server response"));
+          reject(new Error(xhr.status >= 400 ? `Server error (${xhr.status}): ${xhr.statusText}` : "Invalid server response"));
         }
       });
       
