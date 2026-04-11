@@ -7,7 +7,10 @@ import {
   RenameResponse,
 } from "../types";
 
-const API_BASE_URL = "https://ftptransfer-demos.onrender.com"; // Adjust if backend runs on different host/port
+const API_BASE_URL = "https://ftptransfer-demos.onrender.com"; 
+
+// const API_BASE_URL = "http://localhost:3000"; // Use local backend during development
+
 
 const headers = {
   "Content-Type": "application/json",

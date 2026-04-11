@@ -15,6 +15,7 @@ export interface FileEntry {
   name: string;
   url: string;
   size: number;
+  modifiedAt: number;
 }
 
 /** Single folder entry */

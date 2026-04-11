@@ -11,6 +11,8 @@ import {
   Search,
   X,
   Pencil,
+  Clock,
+  Sparkles,
 } from 'lucide-react';
 import { ApiService } from '../services/api';
 import { SftpCredentials, FolderEntry, FileEntry } from '../types';
@@ -557,6 +559,14 @@ export const FolderBrowserCard: React.FC<Props> = ({
                       />
                     </div>
 
+                    {/* New badge for files uploaded in last 24 hours */}
+                    {f.modifiedAt && (Date.now() - f.modifiedAt < 24 * 60 * 60 * 1000) && (
+                      <div className="absolute top-1.5 left-1.5 z-10 flex items-center gap-0.5 bg-green-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">
+                        <Sparkles className="w-2.5 h-2.5" />
+                        New
+                      </div>
+                    )}
+
                     {isRenaming ? (
                       <div className="flex items-center gap-1 w-full" data-item-action>
                         <input
@@ -592,9 +602,22 @@ export const FolderBrowserCard: React.FC<Props> = ({
                       </span>
                     )}
 
-                    <span className="text-[9px] text-text-muted">
-                      {(f.size / 1024).toFixed(1)} KB
-                    </span>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <span className="text-[9px] text-text-muted">
+                        {(f.size / 1024).toFixed(1)} KB
+                      </span>
+                    </div>
+                    {f.modifiedAt > 0 && (
+                      <div className="flex items-center gap-0.5 mt-0.5" title={new Date(f.modifiedAt).toLocaleString()}>
+                        <Clock className="w-2.5 h-2.5 text-text-muted" />
+                        <span className="text-[8px] text-text-muted">
+                          {new Date(f.modifiedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </span>
+                        <span className="text-[8px] text-text-muted">
+                          {new Date(f.modifiedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                        </span>
+                      </div>
+                    )}
 
                     {/* Action buttons on selection */}
                     {isSelected && !isRenaming && (

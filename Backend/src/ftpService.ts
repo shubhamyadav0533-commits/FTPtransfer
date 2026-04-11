@@ -110,7 +110,9 @@ export async function listFiles(
         name: item.name,
         url: buildPublicUrl(credentials, folder, item.name),
         size: item.size,
-      }));
+        modifiedAt: item.modifyTime,
+      }))
+      .sort((a, b) => b.modifiedAt - a.modifiedAt);
 
     return files;
   } finally {
